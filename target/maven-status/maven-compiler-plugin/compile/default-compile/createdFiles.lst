@@ -1,2 +1,5 @@
 io\github\francisfernandez28\libraries\FirebaseHelper\FirebaseMessagingHelper\Messaging$Priority.class
+io\github\francisfernandez28\libraries\CSV\CSVUtils.class
 io\github\francisfernandez28\libraries\FirebaseHelper\FirebaseMessagingHelper\Messaging.class
+io\github\francisfernandez28\libraries\FirebaseHelper\Exceptions\FirebaseAppNotInitialized.class
+io\github\francisfernandez28\libraries\Json\Parser.class

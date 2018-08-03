@@ -6,6 +6,8 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 
+import io.github.francisfernandez28.libraries.FirebaseHelper.Exceptions.FirebaseAppNotInitialized;
+
 public class Messaging {
 
 	private FirebaseMessaging firebaseMessaging;
@@ -28,11 +30,11 @@ public class Messaging {
 
 	}
 
-	public Messaging() throws Exception {
+	public Messaging() throws FirebaseAppNotInitialized {
 		try {
 			this.firebaseMessaging = FirebaseMessaging.getInstance();
 		} catch (Exception e) {
-			throw new Exception("Initialized first the firebaseApp");
+			throw new FirebaseAppNotInitialized();
 		}
 
 	}
