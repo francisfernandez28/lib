@@ -2,18 +2,18 @@ package io.github.francisfernandez28.libraries.CSV;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
-import java.util.stream.Collectors;
 
-import org.json.CDL;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import io.github.francisfernandez28.libraries.Json.Parser;
 
 public class CSVUtils {
 
@@ -126,51 +126,162 @@ public class CSVUtils {
 		return desiredString;
 	}
 
-	public static String generateCSVString(String jsonString, String jsonParam) {
+	public static String generateCSVStringFromJsonObject(String jsonObjectString, String seperator)
+			throws JSONException {
+
+		StringBuilder builderHeader;
+		StringJoiner sjValues;
 
 		JSONObject output;
 		try {
-			output = new JSONObject(jsonString);
+			builderHeader = new StringBuilder();
+			output = new JSONObject(jsonObjectString);
+			sjValues = new StringJoiner(seperator);
+			StringJoiner sj = new StringJoiner(seperator);
+			Iterator<?> keys = output.keys();
+			while (keys.hasNext()) {
+				String key = (String) keys.next();
 
-			JSONArray docs = output.getJSONArray(jsonParam);
-			String csv = CDL.toString(docs);
-			return csv;
+				sj.add(key);
+				sjValues.add(String.valueOf(output.get(key)));
+
+			}
+
+			builderHeader.append(sj.toString()).append("\n");
+			builderHeader.append(sjValues.toString());
+
+			return builderHeader.toString();
 
 		} catch (JSONException e) {
-
+			throw new JSONException(e.getMessage());
 		}
-		return null;
 
 	}
 
-	public static Map<String, String> generateCSVStringFromJsonArray(String jsonStringArray, String seperator) {
+	public static String generateCSVStringFromJsonArray(String jsonStringArray, String seperator) throws JSONException {
 
 		JSONArray output;
 		JSONObject obj;
-		Map<String, String> results = new HashMap<String, String>();
 
+		StringBuilder builderHeader = new StringBuilder();
+		StringJoiner sjValues;
+		StringBuilder builderValues = new StringBuilder();
+		StringBuilder result = new StringBuilder();
 		try {
 			output = new JSONArray(jsonStringArray);
 
 			for (int x = 0; x < output.length(); x++) {
+				sjValues = new StringJoiner(seperator);
+				builderHeader = new StringBuilder();
 				StringJoiner sj = new StringJoiner(seperator);
 				obj = output.getJSONObject(x);
 				Iterator<?> keys = obj.keys();
 				while (keys.hasNext()) {
 					String key = (String) keys.next();
 					sj.add(key);
+					sjValues.add(String.valueOf(obj.get(key)));
 
 				}
-				results.put(String.valueOf(x), sj.toString());
+				builderValues.append(sjValues.toString());
+				builderValues.append("\r\n");
+				builderHeader.append(sj.toString()).append("\r\n");
 
 			}
-
-			return results;
-
+			result.append(builderHeader.toString()).append(builderValues.toString());
+			return result.toString();
 		} catch (JSONException e) {
-
+			throw new JSONException(e.getMessage());
 		}
-		return null;
 
 	}
+
+	public static String generateCSVStringFromJsonArray(String jsonStringArray, String seperator, String prefix,
+			String suffix) throws JSONException {
+
+		JSONArray output;
+		JSONObject obj;
+
+		StringBuilder builderHeader = new StringBuilder();
+		StringJoiner sjValues;
+		StringBuilder builderValues = new StringBuilder();
+		StringBuilder result = new StringBuilder();
+		try {
+			output = new JSONArray(jsonStringArray);
+
+			for (int x = 0; x < output.length(); x++) {
+				sjValues = new StringJoiner(seperator, prefix, suffix);
+				builderHeader = new StringBuilder();
+				StringJoiner sj = new StringJoiner(seperator);
+				obj = output.getJSONObject(x);
+				Iterator<?> keys = obj.keys();
+				while (keys.hasNext()) {
+					String key = (String) keys.next();
+					sj.add(key);
+					sjValues.add(String.valueOf(obj.get(key)));
+
+				}
+				builderValues.append(sjValues.toString());
+				builderValues.append("\r\n");
+				builderHeader.append(sj.toString()).append("\r\n");
+
+			}
+			result.append(builderHeader.toString()).append(builderValues.toString());
+			return result.toString();
+		} catch (JSONException e) {
+			throw new JSONException(e.getMessage());
+		}
+
+	}
+
+	public static String generateCSVStringFromJsonArray(String jsonStringArray, String seperator,
+			String keyOfJsonObjectToFind, int indexInJsonArray) throws JSONException {
+
+		JSONArray output;
+		JSONObject obj;
+
+		StringBuilder builderHeader = new StringBuilder();
+		StringJoiner sjValues;
+		StringBuilder builderValues = new StringBuilder(32);
+		StringBuilder result = new StringBuilder();
+		try {
+			output = new JSONArray(jsonStringArray);
+			output = output.getJSONArray(indexInJsonArray);
+			for (int x = 0; x < output.length(); x++) {
+				sjValues = new StringJoiner(seperator);
+				builderHeader = new StringBuilder();
+				StringJoiner sj = new StringJoiner(seperator);
+				obj = output.getJSONObject(x);
+				obj = obj.getJSONObject(keyOfJsonObjectToFind);
+				Iterator<?> keys = obj.keys();
+				while (keys.hasNext()) {
+					String key = (String) keys.next();
+					sj.add(key);
+					sjValues.add(String.valueOf(obj.get(key)));
+
+				}
+
+				builderValues.append(sjValues.toString());
+				builderValues.append("\r\n");
+				builderHeader.append(sj.toString()).append("\r\n");
+
+			}
+			result.append(builderHeader.toString()).append(builderValues.toString());
+			return result.toString();
+		} catch (JSONException e) {
+			throw new JSONException(e.getMessage());
+		}
+
+	}
+
+	public <T> String generateCSVStringFromListOfModel(List<T> models, String seperator) throws JSONException {
+		String jsonString = Parser.parseToJsonPrettyPrintFormat(models);
+		return generateCSVStringFromJsonArray(jsonString, seperator);
+	}
+
+	public <T> String generateCSVStringFromListOfModel(List<T> models, String seperator, String prefix, String suffix)
+			throws JSONException {
+		String jsonString = Parser.parseToJsonPrettyPrintFormat(models);
+		return generateCSVStringFromJsonArray(jsonString, seperator, prefix, suffix);
+	}
+
 }

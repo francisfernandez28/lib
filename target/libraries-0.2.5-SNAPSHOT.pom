@@ -5,7 +5,7 @@
 
 	<groupId>io.github.francisfernandez28</groupId>
 	<artifactId>libraries</artifactId>
-	<version>0.0.8-SNAPSHOT</version>
+	<version>0.2.5-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 
