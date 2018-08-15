@@ -1,5 +1,7 @@
 package io.github.francisfernandez28.libraries.FirebaseHelper.FirebaseMessagingHelper;
 
+import java.util.Map;
+
 import com.google.firebase.messaging.AndroidConfig;
 import com.google.firebase.messaging.AndroidNotification;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -52,6 +54,22 @@ public class Messaging {
 	public String sendToForeground(String message, String topic) throws FirebaseMessagingException {
 		AndroidConfig config = AndroidConfig.builder().putData("Message", message).build();
 		Message messageFirebase = Message.builder().setTopic(topic).setAndroidConfig(config).build();
+		return this.firebaseMessaging.send(messageFirebase);
+	}
+
+	/**
+	 * Send Message in payload
+	 * 
+	 * @param data
+	 *            Map data to put on payload
+	 * @param token
+	 *            Target token
+	 * @return string id of message sent
+	 * @throws FirebaseMessagingException
+	 */
+	public String sendToTokenForeground(Map<String, String> data, String token) throws FirebaseMessagingException {
+		AndroidConfig config = AndroidConfig.builder().putAllData(data).build();
+		Message messageFirebase = Message.builder().setToken(token).setAndroidConfig(config).build();
 		return this.firebaseMessaging.send(messageFirebase);
 	}
 
